@@ -20,9 +20,9 @@ find_package(STILO REQUIRED)
 target_link_libraries(my_project STILO::stilo)
 ```
 
-Note that STILO requires C++20, so it
+Note that STILO requires to be compiled using C++20.
 
-The library is included in the project using the code below.
+The framework headers is included in the project using the code below.
 
 ```c++
-#include <OptiMA/OptiMA.h>
+#include <STILO/STILO.h>
