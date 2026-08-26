@@ -26,3 +26,4 @@ The framework headers is included in the project using the code below.
 
 ```c++
 #include <STILO/STILO.h>
+```
