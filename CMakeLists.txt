@@ -22,7 +22,10 @@ src/ProblemModels/WeightedMaxCutProblem.cpp src/Shared/Exceptions.cpp
 src/SolverModels/GAModels/Individual.cpp src/SolverModels/GAModels/IndividualPool.cpp
 src/Solvers/ACOSolver.cpp src/Solvers/GASolver.cpp src/Solvers/SASolver.cpp src/Solvers/Solver.cpp)
 
-set_property(TARGET ${BINARY_NAME} PROPERTY CXX_STANDARD 20)
+target_compile_features(${BINARY_NAME}
+    PUBLIC
+        cxx_std_20
+)
 
 target_include_directories(${BINARY_NAME}
   PUBLIC
