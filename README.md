@@ -161,12 +161,85 @@ STILO contains three solver classes:
     * GASolver (Genetic Algorithm Solver)
     * SASolver (Simulated Annealing Solver)
 
-The C++ code used to generate instances of these solver classes is shown below,
+Each of them are derived from the base class Solver, and each have the functions to solve a given problem instance using the given solver configurations. The SolverInput class is used as a template whose instances are used as the input to use the solve function of all solvers. The C++ code below explains the steps to use each solver, explaining the types of the configuration parameters. The purpose of each configuration parameter and how it affects the solution process is explained in detail in the referenced paper, and is omitted here.
 
 ```c++
-STILO::ACOSolver acoSolver();
-STILO::GASolver gaSolver();
-STILO::SASolver saSolver();
+STILO::ACOSolver acoSolver;
+STILO::SolverInput input;
+    
+input.problem = &problemInstance;   // Problem*
+input.timeLimit = timeLimit;        // std::chrono::milliseconds
+
+input.ACOConfig.graphStructure = graphStructure;                                // STILO::GraphStructure (enum)
+input.ACOConfig.tourSelectionOperator = tourSelectionOperator;                  // STILO::TourSelectionOperator (enum)
+input.ACOConfig.pheromoneCalculationOperator = pheromoneCalculationOperator;    // STILO::PheromoneCalculationOperator (enum)
+input.ACOConfig.pheromoneUpdateOperator = pheromoneUpdateOperator;              // STILO::PheromoneUpdateOperator (enum)
+input.ACOConfig.antCount = antCount;                                            // int
+input.ACOConfig.eliteCount = eliteCount;                                        // int
+input.ACOConfig.evaporationParameter = evaporationParameter;                    // double
+input.ACOConfig.pheromoneInfluence = pheromoneInfluence;                        // double
+input.ACOConfig.heuristicInfluence = heuristicInfluence;                        // double
+input.ACOConfig.initialPheromone = initialPheromone;                            // double
+input.ACOConfig.pheromoneConstant = pheromoneConstant;                          // double
+input.ACOConfig.localDecayParameter = localDecayParameter;                      // double
+    
+STILO::SolverOutput output = acoSolver.solve(input);
 ```
 
-Each solver class contains a method to solve a problem and return its result. These methods accepts the instances of SolverInput class as their input, and returns an instance of the SolverOutput class. A SolverInput instance contains a pointer to the problem to be solved, and the solver configurations for ACOSolver, GASolver and SASolver classes.
+```c++
+STILO::GASolver gaSolver;
+STILO::SolverInput input;
+    
+input.problem = &problemInstance;   // Problem*
+input.timeLimit = timeLimit;        // std::chrono::milliseconds
+    
+input.GAConfig.selectionOperator = selectionOperator;                         // STILO::SelectionOperator (enum)
+input.GAConfig.cycleCrossoverCoefficient = cycleCrossoverCoefficient;         // double
+input.GAConfig.kpointCrossoverCoefficient = kpointCrossoverCoefficient;       // double      
+input.GAConfig.PMXCrossoverCoefficient = PMXCrossoverConstant;                // double
+input.GAConfig.OXCrossoverCoefficient = OXCrossoverCoefficient;               // double
+input.GAConfig.uniformCrossoverCoefficient = uniformCrossoverCoefficient;     // double
+input.GAConfig.pointMutationCoefficient = pointMutationCoefficient;           // double
+input.GAConfig.insertMutationCoefficient = insertMutationCoefficient;         // double
+input.GAConfig.invertMutationCoefficient = invertMutationCoefficient;         // double
+input.GAConfig.swapMutationCoefficient = swapMutationCoefficient;             // double
+input.GAConfig.populationSize = populationSize;                               // int
+input.GAConfig.matingCount = matingCount;                                     // int
+input.GAConfig.mutationProbability = mutationProbability;                     // double
+input.GAConfig.eliteCount = eliteCount;                                       // int
+input.GAConfig.tournamentSize = tournamentSize;                               // int
+input.GAConfig.k = kValue;                                                    // int
+input.GAConfig.pointMutationProbability = pointMutationProbability;           // double
+    
+STILO::SolverOutput output = gaSolver.solve(input);
+```
+
+```c++
+input.problem = &problemInstance;   // Problem*
+input.timeLimit = timeLimit;        // std::chrono::milliseconds
+
+input.SAConfig.coolingSchedule = coolingSchedule;                            // STILO::EvolvingParameterType (enum)
+input.SAConfig.distanceCalculationOperator = distanceCalculationOperator;    // STILO::DistanceCalculationOperator (enum)
+input.SAConfig.pointMoveCoefficient = pointMoveCoefficient;                  // double
+input.SAConfig.insertMoveCoefficient = insertMoveCoefficient;                // double
+input.SAConfig.invertMoveCoefficient = invertMoveCoefficient;                // double
+input.SAConfig.swapMoveCoefficient = swapMoveCoefficient;                    // double
+input.SAConfig.initialTemperature = initialTemperature;                      // double
+input.SAConfig.coolingParameter = coolingParameter;                          // double
+input.SAConfig.maximumNeighborhoodSize = maximumNeighborhoodSize;            // int
+input.SAConfig.minimumNeighborhoodSize = minimumNeighborhoodSize;            // int
+
+STILO::SolverOutput output = saSolver.solve(input); 
+```
+
+Similar to the SolverInput class, the output of the solvers are standardized using the SolverOutput class. An instance of this class contains the information about the obtained solution and the execution process, as shown below.
+
+```c++
+double cost = output.cost;                                    // cost of the best solution found by the solver (natural objective value for minimization problems)
+double value = output.value;                                  // value of the best solution found by the solver (natural objective value for maximization problems)
+std::vector<int> bestSolution = output.bestSolution;          // the integer string representing the best solution found by the solver
+std::chrono::duration executionTime = output.executionTime;   // total execution time
+int iterationCount = output.iterationCount;                   // number of iterations used before the time limit is reached
+```
+
+### Analyzing Solver Configurations
