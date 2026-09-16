@@ -132,4 +132,41 @@ STILO::TransactionSchedulingProblem txnsp(
 
 #### Traveling Salesperson Problem
 
+Traveling Salesperson Problem is the problem of finding the Hamiltonian cycle with the minimum total weight for a given undirected weighted graph. It can also be thought as finding the minimum length cyclic tour between given cities by visiting each city.
 
+The example C++ code used to create Traveling Salesperson Problem instances using all necessary problem data in STILO is given below.
+
+```c++
+STILO::TravelingSalespersonProblem tsp(
+    cityCount,  // (int) number of cities
+    distances,  // (std::vector<std::vector<double>>) distance matrix
+);
+```
+
+The example C++ code used to create Traveling Salesperson Problem instances by randomly generating the distance values in STILO is given below.
+
+```c++
+STILO::TravelingSalespersonProblem tsp(
+    cityCount,  // (int) number of cities
+    distanceDistribution,   // (STILO::ProbabilityDistribution) the type of probability distribution to be used for random distance generation
+    distributionParameter1, // (double) the first parameter used for random distance generation
+    distributionParameter2  // (double) the second parameter used for random distance generation
+);
+```
+
+### Solving Problem Instances
+
+STILO contains three solver classes:
+    * ACOSolver (Ant Colony Optimization Solver) 
+    * GASolver (Genetic Algorithm Solver)
+    * SASolver (Simulated Annealing Solver)
+
+The C++ code used to generate instances of these solver classes is shown below,
+
+```c++
+STILO::ACOSolver acoSolver();
+STILO::GASolver gaSolver();
+STILO::SASolver saSolver();
+```
+
+Each solver class contains a method to solve a problem and return its result. These methods accepts the instances of SolverInput class as their input, and returns an instance of the SolverOutput class. A SolverInput instance contains a pointer to the problem to be solved, and the solver configurations for ACOSolver, GASolver and SASolver classes.
