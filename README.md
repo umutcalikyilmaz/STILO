@@ -27,3 +27,14 @@ The framework headers is included in the project using the code below.
 ```c++
 #include <STILO/STILO.h>
 ```
+### Creating Problem Instances
+
+#### Identical Machine Scheduling Problem
+
+#### Max-Cut Problem
+
+#### Weighted Max-Cut Problem
+
+#### Transaction Scheduling Problem
+
+#### Traveling Salesperson Problem
