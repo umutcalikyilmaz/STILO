@@ -226,8 +226,8 @@ input.SAConfig.invertMoveCoefficient = invertMoveCoefficient;                // 
 input.SAConfig.swapMoveCoefficient = swapMoveCoefficient;                    // double
 input.SAConfig.initialTemperature = initialTemperature;                      // double
 input.SAConfig.coolingParameter = coolingParameter;                          // double
-input.SAConfig.maximumNeighborhoodSize = maximumNeighborhoodSize;            // int
 input.SAConfig.minimumNeighborhoodSize = minimumNeighborhoodSize;            // int
+input.SAConfig.maximumNeighborhoodSize = maximumNeighborhoodSize;            // int
 
 STILO::SolverOutput output = saSolver.solve(input); 
 ```
@@ -243,3 +243,70 @@ int iterationCount = output.iterationCount;                   // number of itera
 ```
 
 ### Analyzing Solver Configurations
+
+STILO is also equiped with tools to analyze the relative effectiveness of given set of configurations over synthetically created instance classes and on preset problem instances, under a set of time limits. The two analyzer classes created for this purpose is the SyntheticAnalyzer and InstanceAnalyzer.
+
+#### Configuration Analysis using Synthetic Instances
+
+The Synthetic analyzer class is designed to analyze a given set of configurations using synthetic instances. This class has the analyze member function, which takes an instance of the SyntheticAnalysisInput class as its input. Such an instance contains:
+    * The selection of problems to be used in the analysis,
+    * The selection of  solvers to be analyzed,
+    * The set of problem parameters to create different instance classes of each selected problems,
+    * The set of solver hyperparameters to create the different solver configurations to test, 
+    * The set of time limits to be used in the analysis,
+    * And additional settings for how to perform the analysis. 
+
+An example C++ code snippet showing the use of the SyntheticAnalyzer class is presented below.
+
+```c++
+STILO::SyntheticAnalysisInput input;
+STILO::SyntheticAnalyzer syntheticAnalyzer;
+
+input.problemSelection.analyzeMCP = true;    // Only MCP is selected for analysis. The other problems are not selected by default.
+input.solverSelection.analyzeSA = true;      // Only SA configurations are to be analyzed. Other solvers are not selected by default.
+
+input.problemCount = 10;        // The number of synthetic instances created for each combination of problem parameters.
+input.threadCount = 8;          // The number of computation threads used in the analysis. Particularly useful for analyzing large number of solver configurations.
+
+for(int i = 50; i <= 500; i+=5)
+{
+    input.timeLimits.insert(std::chrono::milliseconds(i));        // The set of time limits are created. In the analysis, the solution quality under each time limit
+}                                                                 // is evaluated for each solver configuration.
+
+input.MCPConfigurations.vertexCounts.insert(50);            // Various problem parameters to generate synthetic problem instances are inserted. Solver configurations 
+input.MCPConfigurations.vertexCounts.insert(100);           // are tested separately for each combination of problem parameters.
+input.MCPConfigurations.edgePropensities.insert(0.25);
+input.MCPConfigurations.edgePropensities.insert(0.50);
+
+input.SAConfigurations.coolingSchedules.insert(STILO::EvolvingParameterType::Fast);                          // Various hyperparameters to create solver configurations are
+input.SAConfigurations.coolingSchedules.insert(STILO::EvolvingParameterType::Exponential);                   // inserted. A configuration is created for each combination of
+input.SAConfigurations.distanceCalculationOperators.insert(STILO::DistanceCalculationOperator::Gaussian);    // hyperparameters. The combinations that do not constitute 
+input.SAConfigurations.distanceCalculationOperators.insert(STILO::DistanceCalculationOperator::Cauchy);      // valid configurations are automatically eliminated.
+input.SAConfigurations.moveConfigurations.insert(STILO::MoveConfiguration(1,0,0,0));                        
+input.SAConfigurations.moveConfigurations.insert(STILO::MoveConfiguration(1,1,0,0));
+input.SAConfigurations.initialTemperatures.insert(1.2);
+input.SAConfigurations.initialTemperatures.insert(2);
+input.SAConfigurations.coolingParameters.insert(0.99);
+input.SAConfigurations.minimumNeighborhoodSizes.insert(1);
+input.SAConfigurations.maximumNeighborhoodSizes.insert(2);
+input.SAConfigurations.maximumNeighborhoodSizes.insert(3);
+
+syntheticAnalyzer.analyze(input);
+```
+
+The analysis function does not return any result. Instead, the results of the analysis are recorded to a static csv file.
+
+#### Configuration Analysis using Preset Instances
+
+The InstanceAnalyzer class is designed to analyze a given set of configurations using existing instances. With this functionality, it is possible to use benchmark instances for analysis. The InstanceAnalyzer class has the analyze function, which takes an instance of the InstanceAnalysisInput class. The instance of this class contains:
+    * The address of the directory to the files that contain the benchmark instances, 
+    * The type of the problem that the instances are belong to,
+    * The selection of solvers to be analyzed,
+    * The set of solver hyperparameters to create the different solver configurations to test, 
+    * The set of time limits to be used in the analysis,
+    * And additional settings for how to perform the analysis. 
+ 
+ An example C++ code snippet showing the use of the InstanceAnalyzer class is presented below.
+
+
+    
