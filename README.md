@@ -361,7 +361,7 @@ input.SAConfigurations.maximumNeighborhoodSizes.insert(3);
 syntheticAnalyzer.analyze(input);
 ```
 
-Here, `analyze()` does not return the analysis results directly. Instead, the results are written to CSV files in `~/.stilo/synthetic/analysis`. A separate file is created for each pair of problem configuration and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
+Here, `analyze()` does not return the analysis results directly. Instead, the results are written to CSV files in `~/.STILO/synthetic/analysis`. A separate file is created for each pair of problem configuration and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
 
 #### Configuration Analysis using Predefined Instances
 
@@ -408,5 +408,6 @@ instanceAnalyzer.analyze(input);
 ```
 
 
-Here, `analyze()` does not return the analysis results directly. Instead, the results are written to CSV files in `~/.stilo/instance/analysis`. A separate file is created for each pair of problem instance and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
+Here, `analyze()` does not return the analysis results directly. Instead, the results are written to CSV files in `~/.STILO/instance/analysis`. A separate file is created for each pair of problem instance and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
 
+The project also includes the benchmark instances used in the experiments presented in the paper. They can be found in the `benchmark` folder in the project root directory.
