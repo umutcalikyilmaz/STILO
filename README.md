@@ -8,7 +8,6 @@ For a detailed description of STILO, its algorithm configuration spaces, and the
 
 **[A Metaheuristic Optimization Framework for Discrete Optimization under Strict Time Limits](https://arxiv.org/abs/2609.18702)**
 
-
 ## Citation
 
 If you use STILO in your research, please cite:
@@ -32,9 +31,55 @@ cmake ..
 sudo make install
 ```
 
+## Quick Start
+
+The following example creates a small Identical Machine Scheduling Problem and solves it using simulated annealing under a 100 ms time limit.
+
+```c++
+#include <STILO/STILO.h>
+
+#include <chrono>
+#include <vector>
+
+int main()
+{
+    std::vector<double> lengths = {10.0, 8.0, 7.0, 6.0, 4.0};
+
+    STILO::IdenticalMachinesSchedulingProblem problem(
+        5,          // number of jobs
+        2,          // number of machines
+        lengths     // job lengths
+    );
+
+    STILO::SASolver solver;
+    STILO::SolverInput input;
+
+    input.problem = &problem;
+    input.timeLimit = std::chrono::milliseconds(100);
+
+    input.SAConfig.coolingSchedule = STILO::EvolvingParameterType::Fast;
+    input.SAConfig.distanceCalculationOperator = STILO::DistanceCalculationOperator::Gaussian;
+    input.SAConfig.pointMoveCoefficient = 1.0;
+    input.SAConfig.insertMoveCoefficient = 0.0;
+    input.SAConfig.invertMoveCoefficient = 0.0;
+    input.SAConfig.swapMoveCoefficient = 0.0;
+    input.SAConfig.initialTemperature = 2.0;
+    input.SAConfig.coolingParameter = 0.99;
+    input.SAConfig.minimumNeighborhoodSize = 1;
+    input.SAConfig.maximumNeighborhoodSize = 2;
+
+    STILO::SolverOutput output = solver.solve(input);
+
+    double bestCost = output.cost;
+}
+```
+
+More detailed examples for creating problem instances, configuring solvers, and analyzing solver configurations are provided in the sections below.
+
+
 ## Usage
 ### Importing the Library
-After installation, STILO can be imported to a project by adding the following lines in the CMakeLists.txt file.
+After installation, STILO can be imported to a project by adding the following lines in the `CMakeLists.txt` file.
 
 ```cmake
 find_package(STILO REQUIRED)
@@ -79,7 +124,7 @@ STILO::IdenticalMachinesSchedulingProblem imsp(
 
 The Max-Cut Problem divides the vertices of an undirected graph into two disjoint sets such that the total weight of the edges connecting vertices in different sets is maximized. In STILO, `MaxCutProblem` represents the version in which edge weights are restricted to 0 and 1.
 
-The example C++ code used to create Max Cut Problem instances using all necessary problem data in STILO is given below.
+The example C++ code used to create Max-Cut Problem instances using all necessary problem data in STILO is given below.
 
 ```c++
 STILO::MaxCutProblem mcp(
@@ -88,7 +133,7 @@ STILO::MaxCutProblem mcp(
 );
 ```
 
-The example C++ code used to create Max Cut Problem instances by randomly generating the edge weights in STILO is given below.
+The example C++ code used to create Max-Cut Problem instances by randomly generating the edge weights in STILO is given below.
 
 ```c++
 STILO::MaxCutProblem mcp(
@@ -101,7 +146,7 @@ STILO::MaxCutProblem mcp(
 
 The Weighted Max-Cut Problem extends the Max-Cut formulation by allowing edge weights to assume real values.
 
-The example C++ code used to create Weighted Max Cut Problem instances using all necessary problem data in STILO is given below.
+The example C++ code used to create Weighted Max-Cut Problem instances using all necessary problem data in STILO is given below.
 
 ```c++
 STILO::WeightedMaxCutProblem wmcp(
@@ -110,7 +155,7 @@ STILO::WeightedMaxCutProblem wmcp(
 );
 ```
 
-The example C++ code used to create Weighted Max Cut Problem instances by randomly generating the edge weights in STILO is given below.
+The example C++ code used to create Weighted Max-Cut Problem instances by randomly generating the edge weights in STILO is given below.
 
 ```c++
 STILO::WeightedMaxCutProblem wmcp(
@@ -270,13 +315,13 @@ STILO is also equipped with tools for analyzing the relative effectiveness of a 
 
 #### Configuration Analysis using Synthetic Instances
 
-The `SyntheticAnalyzer` class is designed to analyze a given set of configurations using synthetic instances. This class has the `analyze()` member function, which takes an instance of the `SyntheticAnalysisInput` class as its input. Such an instance contains:
+The `SyntheticAnalyzer` class is designed to analyze a given set of configurations using synthetic instances. This class provides an `analyze()` member function, which takes an instance of the `SyntheticAnalysisInput` class as its input. Such an instance contains:
 - The selection of problems to be used in the analysis,
 - The selection of  solvers to be analyzed,
 - The set of problem parameters to create different instance classes of each selected problem,
 - The set of solver hyperparameters to create the different solver configurations to test, 
 - The set of time limits to be used in the analysis,
-- Additional settings for how to perform the analysis. 
+- Additional settings controlling how the analysis is performed.
 
 An example C++ code snippet showing the use of the `SyntheticAnalyzer` class is presented below.
 
@@ -320,13 +365,13 @@ Here, `analyze()` does not return the analysis results directly. Instead, the re
 
 #### Configuration Analysis using Predefined Instances
 
-The `InstanceAnalyzer` class provides an `analyze()` member function, which takes an instance of the `InstanceAnalysisInput` class. With this functionality, it is possible to use benchmark instances for analysis. The `InstanceAnalyzer` class has the analyze function, which takes an instance of the InstanceAnalysisInput class. The instance of this class contains:
-- The address of the directory to the files that contain the benchmark instances, 
+The `InstanceAnalyzer` class is designed to analyze solver configurations using predefined problem instances, including benchmark instances. It provides an `analyze()` member function, which takes an instance of the `InstanceAnalysisInput` class. Such an instance contains:
+- The directory containing the problem instances, 
 - The type of the problem to which the instances belong,
 - The selection of solvers to be analyzed,
 - The set of solver hyperparameters to create the different solver configurations to test, 
 - The set of time limits to be used in the analysis,
-- Additional settings for how to perform the analysis. 
+- Additional settings controlling how the analysis is performed.
  
  An example C++ code snippet showing the use of the `InstanceAnalyzer` class is presented below.
 
