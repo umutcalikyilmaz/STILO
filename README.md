@@ -1,11 +1,13 @@
 # STILO
 STILO is a metaheuristic framework for strict time-limited optimization. It is designed as a general-purpose optimization environment for a broad range of single-objective discrete problems, including a fine-grained configuration space for multiple algorithm families: ant colony optimization, genetic algorithm, and simulated annealing. During optimization, STILO measures the elapsed CPU time and average iteration duration to terminate execution before a user-defined time limit is exceeded. The framework is also equipped with analysis tools to estimate the solution quality achievable by a given solver configuration under various time limits.
 
+
 ## Reference
 
 For a detailed description of STILO, its algorithm configuration spaces, and the experimental evaluation, see:
 
 **[A Metaheuristic Optimization Framework for Discrete Optimization under Strict Time Limits](https://arxiv.org/abs/2609.18702)**
+
 
 ## Citation
 
