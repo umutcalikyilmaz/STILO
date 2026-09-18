@@ -7,6 +7,19 @@ For a detailed description of STILO, its algorithm configuration spaces, and the
 
 **[A Metaheuristic Optimization Framework for Discrete Optimization under Strict Time Limits](https://arxiv.org/abs/2609.18702)**
 
+## Citation
+
+If you use STILO in your research, please cite:
+
+```bibtex
+@article{calikyilmaz2026metaheuristic,
+  title={A Metaheuristic Optimization Framework for Discrete Optimization under Strict Time Limits},
+  author={{\c{C}}al{\i}ky{\i}lmaz, Umut and Nayak, Nitin and Groppe, Sven},
+  journal={arXiv preprint arXiv:2609.18702},
+  year={2026}
+}
+```
+
 ## Installation
 STILO is designed for Debian-based systems and is currently not compatible with Windows or macOS. STILO requires C++20. For standard installation, the following bash instructions should be executed in the project's root folder.
 
@@ -33,7 +46,7 @@ The framework headers can be included using:
 ```
 ### Creating Problem Instances
 
-STILO includes a generic Problem class that serves as a template for any problem class to be integrated into the framework. It also includes 5 classes derived from the base Problem class, each representing a different discrete optimization problem. Instances can be created either from complete problem data or by providing parameters from which STILO randomly generates an instance. The derived problem classes included in STILO are introduced below.
+STILO includes a generic `Problem` class that serves as a base for any problem to be integrated into the framework. It also includes five classes derived from the base `Problem` class, each representing a different discrete optimization problem. Instances can be created either from complete problem data or by providing parameters from which STILO randomly generates an instance. The derived problem classes included in STILO are introduced below.
 
 #### Identical Machine Scheduling Problem
 
@@ -62,45 +75,45 @@ STILO::IdenticalMachinesSchedulingProblem imsp(
 
 #### Max-Cut Problem
 
-Max-Cut Problem is the problem of dividing the vertices of an undirected graph into two mutually exclusive sets, such that the edge weights between the vertices of different sets are maximized. In STILO, Max-Cut Problem refers to a subclass of this defined problem, in which the edge weights are restricted to 0 and 1. For the version of the problem where edges can assume real values, Weighted Max Cut Problem is used.
+The Max-Cut Problem divides the vertices of an undirected graph into two disjoint sets such that the total weight of the edges connecting vertices in different sets is maximized. In STILO, `MaxCutProblem` represents the version in which edge weights are restricted to 0 and 1.
 
 The example C++ code used to create Max Cut Problem instances using all necessary problem data in STILO is given below.
 
 ```c++
 STILO::MaxCutProblem mcp(
-    verticeCount,   // (int) number of vertices
+    vertexCount,   // (int) number of vertices
     edges           // (std::vector<std::vector<uint8_t>>) edge weights (restricted to 0 and 1)
 );
 ```
 
-The example C++ code used to create Max Cut Problem instances by randomly generating the weight values in STILO is given below.
+The example C++ code used to create Max Cut Problem instances by randomly generating the edge weights in STILO is given below.
 
 ```c++
 STILO::MaxCutProblem mcp(
-    verticeCount,   // (int) number of vertices
-    edgeDensity     // (double) used as the probability of assigning 1 as the weight value to an edge during random weigth generation
+    vertexCount,   // (int) number of vertices
+    edgeDensity     // (double) used as the probability of assigning 1 as the weight value to an edge during random weight generation
 );
 ```
 
 #### Weighted Max-Cut Problem
 
-Weighted Max-Cut Problem is a subclass of the Max-Cut Problem, in which edge weights can assume real values.
+The Weighted Max-Cut Problem extends the Max-Cut formulation by allowing edge weights to assume real values.
 
 The example C++ code used to create Weighted Max Cut Problem instances using all necessary problem data in STILO is given below.
 
 ```c++
 STILO::WeightedMaxCutProblem wmcp(
-    verticeCount,   // (int) number of vertices
+    vertexCount,   // (int) number of vertices
     weights         // (std::vector<std::vector<double>>) edge weights
 );
 ```
 
-The example C++ code used to create Weighted Max Cut Problem instances by randomly generating the weight values in STILO is given below.
+The example C++ code used to create Weighted Max Cut Problem instances by randomly generating the edge weights in STILO is given below.
 
 ```c++
 STILO::WeightedMaxCutProblem wmcp(
-    verticeCount,           // (int) number of vertices
-    lengthDistribution,     // (STILO::ProbabilityDistribution) the type of probability distribution to be used for random weight generation
+    vertexCount,           // (int) number of vertices
+    weightDistribution,     // (STILO::ProbabilityDistribution) the type of probability distribution to be used for random weight generation
     distributionParameter1, // (double) the first parameter used for random weight generation
     distributionParameter2  // (double) the second parameter used for random weight generation
 );
@@ -127,7 +140,7 @@ The example C++ code used to create Transaction Scheduling Problem instances by 
 STILO::TransactionSchedulingProblem txnsp(
     jobCount,               // (int) number of jobs
     machineCount,           // (int) number of machines
-    conflictPropensity,     // (double) this parameter is used as the probability of any two jobs conflict during random instance generation
+    conflictPropensity,     // (double) this parameter is used as the probability that any two jobs conflict during random instance generation
     lengthDistribution,     // (STILO::ProbabilityDistribution) the type of probability distribution to be used for random length generation
     distributionParameter1, // (double) the first parameter used for random length generation
     distributionParameter2  // (double) the second parameter used for random length generation
@@ -165,7 +178,7 @@ STILO contains three solver classes:
 - `GASolver` (Genetic Algorithm Solver)
 - `SASolver` (Simulated Annealing Solver)
 
-Each of them are derived from the base class Solver, and each have the functions to solve a given problem instance using the given solver configurations. The SolverInput class is used as a template whose instances are used as the input to use the solve function of all solvers. The C++ code below explains the steps to use each solver, explaining the types of the configuration parameters. The purpose of each configuration parameter and how it affects the solution process is explained in detail in the referenced paper, and is omitted here.
+Each solver is derived from the base `Solver` class and provides a `solve()` member function for solving a given problem instance under a specified configuration. Solver inputs are standardized through the `SolverInput` class. The examples below demonstrate how to configure and use each solver. The purpose and behavior of the individual configuration parameters are described in detail in the referenced paper.
 
 ```c++
 STILO::ACOSolver acoSolver;
@@ -239,31 +252,31 @@ input.SAConfig.maximumNeighborhoodSize = maximumNeighborhoodSize;            // 
 STILO::SolverOutput output = saSolver.solve(input); 
 ```
 
-Similar to the SolverInput class, the output of the solvers are standardized using the SolverOutput class. An instance of this class contains the information about the obtained solution and the execution process, as shown below.
+Solver outputs are standardized through the `SolverOutput` class. An instance of this class contains information about the obtained solution and the execution process, as shown below.
 
 ```c++
 double cost = output.cost;                                    // cost of the best solution found by the solver (natural objective value for minimization problems)
 double value = output.value;                                  // value of the best solution found by the solver (natural objective value for maximization problems)
 std::vector<int> bestSolution = output.bestSolution;          // the integer string representing the best solution found by the solver
-auto executionTime = output.executionTime;   // total execution time
+auto executionTime = output.executionTime;                    // total execution time
 int iterationCount = output.iterationCount;                   // number of iterations used before the time limit is reached
 ```
 
 ### Analyzing Solver Configurations
 
-STILO is also equiped with tools to analyze the relative effectiveness of given set of configurations over synthetically created instance classes and on preset problem instances, under a set of time limits. The two analyzer classes created for this purpose is the SyntheticAnalyzer and InstanceAnalyzer.
+STILO is also equipped with tools for analyzing the relative effectiveness of a given set of configurations across synthetic instance classes and predefined problem instances under different time limits. The two analyzer classes created for this purpose are the `SyntheticAnalyzer` and `InstanceAnalyzer`.
 
 #### Configuration Analysis using Synthetic Instances
 
-The Synthetic analyzer class is designed to analyze a given set of configurations using synthetic instances. This class has the analyze member function, which takes an instance of the SyntheticAnalysisInput class as its input. Such an instance contains:
-    * The selection of problems to be used in the analysis,
-    * The selection of  solvers to be analyzed,
-    * The set of problem parameters to create different instance classes of each selected problems,
-    * The set of solver hyperparameters to create the different solver configurations to test, 
-    * The set of time limits to be used in the analysis,
-    * And additional settings for how to perform the analysis. 
+The `SyntheticAnalyzer` class is designed to analyze a given set of configurations using synthetic instances. This class has the `analyze()` member function, which takes an instance of the `SyntheticAnalysisInput` class as its input. Such an instance contains:
+- The selection of problems to be used in the analysis,
+- The selection of  solvers to be analyzed,
+- The set of problem parameters to create different instance classes of each selected problem,
+- The set of solver hyperparameters to create the different solver configurations to test, 
+- The set of time limits to be used in the analysis,
+- Additional settings for how to perform the analysis. 
 
-An example C++ code snippet showing the use of the SyntheticAnalyzer class is presented below.
+An example C++ code snippet showing the use of the `SyntheticAnalyzer` class is presented below.
 
 ```c++
 STILO::SyntheticAnalysisInput input;
@@ -273,7 +286,7 @@ input.problemSelection.analyzeMCP = true;    // Only MCP is selected for analysi
 input.solverSelection.analyzeSA = true;      // Only SA configurations are to be analyzed. Other solvers are not selected by default.
 
 input.problemCount = 10;        // The number of synthetic instances created for each combination of problem parameters.
-input.threadCount = 8;          // The number of computation threads used in the analysis. Particularly useful for analyzing large number of solver configurations.
+input.threadCount = 8;          // The number of computation threads used in the analysis. Particularly useful for analyzing large numbers of solver configurations.
 
 for(int i = 50; i <= 500; i+=5)
 {
@@ -301,30 +314,30 @@ input.SAConfigurations.maximumNeighborhoodSizes.insert(3);
 syntheticAnalyzer.analyze(input);
 ```
 
-Here, analyze() does not return the analysis results directly. Instead, the results are written to CSV files in ~/.stilo/synthetic/analysis. A separate file is created for each pair of problem configuration and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
+Here, `analyze()` does not return the analysis results directly. Instead, the results are written to CSV files in `~/.stilo/synthetic/analysis`. A separate file is created for each pair of problem configuration and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
 
-#### Configuration Analysis using Preset Instances
+#### Configuration Analysis using Predefined Instances
 
-The InstanceAnalyzer class is designed to analyze a given set of configurations using existing instances. With this functionality, it is possible to use benchmark instances for analysis. The InstanceAnalyzer class has the analyze function, which takes an instance of the InstanceAnalysisInput class. The instance of this class contains:
-    * The address of the directory to the files that contain the benchmark instances, 
-    * The type of the problem that the instances are belong to,
-    * The selection of solvers to be analyzed,
-    * The set of solver hyperparameters to create the different solver configurations to test, 
-    * The set of time limits to be used in the analysis,
-    * And additional settings for how to perform the analysis. 
+The `InstanceAnalyzer` class provides an `analyze()` member function, which takes an instance of the `InstanceAnalysisInput` class. With this functionality, it is possible to use benchmark instances for analysis. The `InstanceAnalyzer` class has the analyze function, which takes an instance of the InstanceAnalysisInput class. The instance of this class contains:
+- The address of the directory to the files that contain the benchmark instances, 
+- The type of the problem to which the instances belong,
+- The selection of solvers to be analyzed,
+- The set of solver hyperparameters to create the different solver configurations to test, 
+- The set of time limits to be used in the analysis,
+- Additional settings for how to perform the analysis. 
  
- An example C++ code snippet showing the use of the InstanceAnalyzer class is presented below.
+ An example C++ code snippet showing the use of the `InstanceAnalyzer` class is presented below.
 
 ```c++
 STILO::InstanceAnalysisInput input;
 STILO::InstanceAnalyzer instanceAnalyzer;
 
-input.problemType = STILO::ProblemType::TravelingSalesperson;    // Problem type for the preset instances
+input.problemType = STILO::ProblemType::TravelingSalesperson;    // Problem type for the predefined instances
 input.instanceDirectory = "/home/user/TSPInstances";             // The directory containing the instance files
 input.solverSelection.analyzeSA = true;                          // Only SA configurations are to be analyzed. Other solvers are not selected by default.
 
-input.solutionCount = 10;       // The number of times each instance is solved by each instance. Average of the objective values obtained is used for analysis.
-input.threadCount = 8;          // The number of computation threads used in the analysis. Particularly useful for analyzing large number of solver configurations.
+input.solutionCount = 10;       // Number of times each instance is solved using each solver configuration. Average of the objective values obtained is used for analysis.
+input.threadCount = 8;          // The number of computation threads used in the analysis. Particularly useful for analyzing large numbers of solver configurations.
 
 for(int i = 50; i <= 500; i+=5)
 {
@@ -348,5 +361,5 @@ instanceAnalyzer.analyze(input);
 ```
 
 
-Here, analyze() does not return the analysis results directly. Instead, the results are written to CSV files in ~/.stilo/instance/analysis. A separate file is created for each pair of problem instance and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
+Here, `analyze()` does not return the analysis results directly. Instead, the results are written to CSV files in `~/.stilo/instance/analysis`. A separate file is created for each pair of problem instance and solver. Each file contains the results and the hyperparameters of the best configurations identified for each time limit.
 
